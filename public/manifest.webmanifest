@@ -1,0 +1,16 @@
+{
+  "name": "Наш уютный уголок",
+  "short_name": "Наш уголок",
+  "description": "Наши истории, фото и время, которое мы вместе.",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FDF0F3",
+  "theme_color": "#FDF0F3",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

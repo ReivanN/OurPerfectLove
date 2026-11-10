@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Наш уютный уголок ❤️</title>
+<script>document.documentElement.className='js'</script>
+<meta name="description" content="Наш уютный уголок: истории, события, фото и счётчик времени, которое мы вместе.">
+<meta name="theme-color" content="#FDF0F3">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21s-7.5-4.6-9.6-9.1C.9 8.5 3 5 6.4 5c2 0 3.7 1.1 5.6 3.2C13.9 6.1 15.6 5 17.6 5 21 5 23.1 8.5 21.6 11.9 19.5 16.4 12 21 12 21z' fill='%23E8587F'/%3E%3C/svg%3E">
+<!-- иконка на экран телефона -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Наш уголок">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<!-- превью при отправке ссылки в мессенджер -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Наш уютный уголок ❤️">
+<meta property="og:description" content="Наши истории, фото и время, которое мы вместе.">
+<meta property="og:image" content="https://ourperfectlove.netlify.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Onest:wght@400;500;600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#4B2A38; --paper:#FDF0F3; --tomato:#F6B1C3; --tomato-text:#B0415F; --line:#E08FA7;
+  --muted:#6A4150; --photo-bg:#F3D7DF; --photo-ink:#8A5668; --tape:rgba(248,190,206,.85);
+  --display:'Unbounded',system-ui,sans-serif; --body:'Onest',system-ui,sans-serif; --hand:'Caveat','Segoe Script',cursive;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:var(--body);background-color:var(--paper);
+  background-image:radial-gradient(rgba(214,110,140,.22) 1px,transparent 1px);background-size:22px 22px}
+.wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 24px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+
+/* header + tabs */
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:32px 0}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.02em}
+.brand svg{flex:none}
+.tabs{display:flex;flex-wrap:wrap;gap:12px}
+.tab{display:inline-flex;align-items:center;min-height:44px;padding:0 22px;border:2px solid var(--line);border-radius:999px;background:transparent;font-weight:600;font-size:15px;cursor:pointer;transition:transform .15s}
+.tab:hover{transform:translateY(-2px)}
+.tab[aria-selected="true"]{background:var(--tomato)}
+.btn{display:inline-flex;align-items:center;min-height:52px;padding:0 28px;border:2px solid var(--line);border-radius:999px;background:transparent;font-weight:600;font-size:16px;cursor:pointer;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:var(--tomato)}
+
+/* shared bits */
+.hand{font-family:var(--hand);font-weight:700;color:var(--tomato-text)}
+.eyebrow{font-size:38px;transform:rotate(-2deg);transform-origin:left;margin:0 0 12px}
+h1,h2,h3{margin:0}
+.panel[hidden]{display:none}
+.panel{animation:rise .35s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* плавное появление при прокрутке */
+.rv{opacity:0;translate:0 18px;transition:opacity .6s ease,translate .6s ease}
+.rv.in{opacity:1;translate:0 0}
+html:not(.js) .rv{opacity:1;translate:none}
+
+/* плывущие сердечки на фоне */
+.hearts{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.hearts span{position:absolute;bottom:-40px;opacity:0;animation:floatUp linear infinite}
+@keyframes floatUp{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.3}90%{opacity:.2}100%{transform:translateY(-115vh) rotate(24deg);opacity:0}}
+
+.polaroid{position:relative;margin:0;padding:12px 12px 36px;background:#fff;box-shadow:0 10px 26px rgba(150,60,90,.18)}
+.polaroid .ph{position:relative;width:100%;aspect-ratio:1/1;background:var(--photo-bg);overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--photo-ink);font-size:13px;letter-spacing:.14em}
+.polaroid .ph.empty::before{content:"[ФОТО]"}
+.polaroid img{position:absolute;top:0;left:0;display:block;width:100%;height:100%;max-width:100%;object-fit:cover}
+.tape{position:absolute;top:-14px;width:92px;height:28px;background:var(--tape);pointer-events:none}
+
+/* сетка фото: 2 колонки, квадратные снимки в рамке-полароиде */
+.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;max-width:780px;padding:6px 0}
+.tile{position:relative;box-sizing:content-box;aspect-ratio:1/1;min-width:0;border:12px solid #fff;border-bottom-width:42px;background:var(--photo-bg);overflow:hidden;box-shadow:0 10px 26px rgba(150,60,90,.18);display:flex;align-items:center;justify-content:center;color:var(--photo-ink);font-size:13px;letter-spacing:.14em;outline:1px solid rgba(150,60,90,.10)}
+.tile:nth-child(4n+1){transform:rotate(-1.8deg)}
+.tile:nth-child(4n+2){transform:rotate(1.4deg)}
+.tile:nth-child(4n+3){transform:rotate(-1deg)}
+.tile:nth-child(4n+4){transform:rotate(1.6deg)}
+.tile img,.tile video{position:absolute;top:0;left:0;display:block;width:100%;height:100%;max-width:100%;object-fit:cover}
+.tile.empty::before{content:"[ФОТО]"}
+.dl{display:inline-block;margin-top:-6px;font-size:14px;color:var(--ink)}
+
+/* home */
+.home{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(460px,100%),1fr));gap:40px;align-items:center;padding:56px 0 160px}
+.home h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,5.4vw,58px);line-height:1.05;letter-spacing:-.03em;text-wrap:balance}
+.home .lead{max-width:520px;font-size:18px;line-height:1.65;margin:24px 0}
+.home .note{font-family:var(--hand);font-weight:500;font-size:30px;color:var(--muted);margin:0 0 28px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.stack{position:relative;height:440px}
+.stack .polaroid{position:absolute;width:240px}
+.stack .a{left:6%;top:50px;transform:rotate(-6deg)}
+.stack .b{right:4%;top:120px;transform:rotate(5deg)}
+
+/* обратный отсчёт */
+.soonbox{margin-top:28px;max-width:520px;background:#fff;border-radius:22px;padding:18px 22px;box-shadow:0 8px 22px rgba(150,60,90,.12);display:flex;flex-direction:column;gap:10px}
+.soonbox .r{display:flex;justify-content:space-between;align-items:baseline;gap:6px 16px;flex-wrap:wrap}
+.soonbox .k{color:var(--muted);font-size:15px}
+.soonbox .v{font-family:var(--display);font-weight:600;font-size:18px;color:var(--tomato-text);font-variant-numeric:tabular-nums}
+
+/* clock */
+.clock{padding:56px 0 160px}
+.clock h2{font-family:var(--display);font-weight:800;font-size:clamp(34px,5vw,56px);letter-spacing:-.03em;margin-bottom:40px}
+.board{background:#F9D3DD;color:var(--ink);border-radius:28px;padding:32px;box-shadow:8px 8px 0 var(--tomato)}
+.cells{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(120px,100%),1fr));gap:20px}
+.cell .n{font-family:var(--display);font-weight:600;font-size:clamp(40px,6vw,64px);line-height:1;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.cell:last-child .n{color:#C23B62}
+.cell .l{margin-top:8px;font-size:14px;color:#7A4A5C}
+.board .since{margin-top:24px;padding-top:20px;border-top:1px solid rgba(75,42,56,.18);font-family:var(--hand);font-weight:500;font-size:30px;color:#A23A5B}
+
+/* вехи и бейджи */
+.clock h3.sec{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.4vw,34px);letter-spacing:-.03em;margin:64px 0 8px}
+.next{margin:0 0 28px;font-family:var(--hand);font-weight:500;font-size:30px;color:var(--muted)}
+.next b{color:var(--tomato-text);font-weight:700}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px}
+.badge{background:#fff;border-radius:22px;padding:18px 12px;text-align:center;box-shadow:0 8px 22px rgba(150,60,90,.12);display:flex;flex-direction:column;align-items:center;gap:6px;border:2px solid transparent}
+.badge .ic{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:28px;background:var(--tomato)}
+.badge .t{font-family:var(--display);font-weight:600;font-size:15px}
+.badge .s{font-size:13px;color:var(--muted)}
+.badge.locked{background:rgba(255,255,255,.55);box-shadow:none;border:2px dashed var(--line)}
+.badge.locked .ic{background:var(--photo-bg);filter:grayscale(1);opacity:.55}
+.badge.soon{border:2px solid var(--tomato-text)}
+.badge.soon .s{color:var(--tomato-text);font-weight:600}
+
+/* notes */
+.notes{padding:48px 0 160px;display:flex;flex-direction:column;gap:56px}
+.notes h2{font-family:var(--display);font-weight:800;font-size:clamp(32px,4.6vw,48px);letter-spacing:-.03em}
+.notes .sub{margin:10px 0 0;font-family:var(--hand);font-weight:500;font-size:34px;color:var(--muted)}
+.entry{position:relative;background:#fff;box-shadow:0 14px 36px rgba(150,60,90,.14);padding:36px;display:flex;flex-direction:column;gap:22px}
+.entry:nth-of-type(odd){transform:rotate(-.5deg)}
+.entry:nth-of-type(even){transform:rotate(.5deg)}
+.entry .meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding-right:70px}
+.entry .date{font-size:36px}
+.who{display:inline-block;font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;color:var(--ink)}
+.mood{position:absolute;top:16px;right:16px;width:54px;height:54px;border-radius:50%;background:var(--paper);border:2px dashed var(--line);display:grid;place-items:center;font-size:28px;transform:rotate(8deg)}
+.sticker{position:absolute;bottom:-18px;font-size:34px;pointer-events:none;filter:drop-shadow(0 3px 4px rgba(150,60,90,.25))}
+.sticker.s0{right:24px;transform:rotate(12deg)}
+.sticker.s1{right:74px;transform:rotate(-14deg)}
+.sticker.s2{right:122px;transform:rotate(8deg)}
+.entry h3{font-family:var(--display);font-weight:600;font-size:clamp(18px,2.4vw,24px);letter-spacing:-.02em}
+.entry .text{max-width:700px;margin:0;line-height:1.7;color:var(--muted);white-space:pre-line}
+.notes .empty-note{color:var(--muted)}
+
+/* баночка комплиментов */
+.jar{padding:48px 0 160px;text-align:center}
+.jar h2{font-family:var(--display);font-weight:800;font-size:clamp(32px,4.6vw,48px);letter-spacing:-.03em}
+.jar .sub{margin:10px 0 0;font-family:var(--hand);font-weight:500;font-size:34px;color:var(--muted)}
+.jarbox{display:flex;flex-direction:column;align-items:center;gap:28px;margin-top:32px}
+.jarart{width:min(240px,64vw)}
+.jarart svg{display:block;width:100%;height:auto;overflow:visible}
+.jarart.shake svg{animation:shake .6s ease}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-7deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-4deg)}80%{transform:rotate(3deg)}}
+.slip{position:relative;width:min(560px,100%);background:#fff;padding:36px 28px 28px;box-shadow:0 14px 36px rgba(150,60,90,.16);transform:rotate(-1.2deg);display:flex;flex-direction:column;align-items:center;gap:16px}
+.slip[hidden]{display:none}
+.slip.pop{animation:pop .5s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes pop{from{opacity:0;transform:translateY(40px) rotate(4deg) scale(.9)}to{opacity:1;transform:rotate(-1.2deg)}}
+.slip .q{margin:0;font-family:var(--hand);font-weight:500;font-size:clamp(26px,4vw,34px);line-height:1.25;color:var(--ink);text-wrap:balance}
+.count{font-size:14px;color:var(--muted);margin:0}
+
+/* формы добавления записок и заметок */
+.formcard{background:#fff;border:2px dashed var(--line);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:16px;text-align:left;width:min(640px,100%)}
+.formcard[hidden],.addwrap[hidden]{display:none}
+.formcard h3{font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:-.02em}
+.fld{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:600;color:var(--muted);border:0;padding:0;margin:0;min-width:0}
+.fld legend{padding:0;margin-bottom:6px}
+.fld input,.fld select,.fld textarea{font:inherit;font-weight:400;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:10px 14px;min-height:44px;width:100%}
+.fld textarea{min-height:130px;resize:vertical;line-height:1.5}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.moods{display:flex;flex-wrap:wrap;gap:8px}
+.moods label{position:relative;display:block}
+.moods input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.moods span{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--paper);font-size:22px}
+.moods input:checked+span{background:var(--tomato);border-color:var(--tomato-text)}
+.moods input:focus-visible+span{outline:3px solid var(--ink);outline-offset:2px}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px}
+.thumbs img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:2px solid var(--line)}
+.msg{margin:0;font-size:14px;min-height:20px}
+.msg.err{color:#B0233F;font-weight:600}
+.msg.ok{color:#2E6B4A;font-weight:600}
+.formrow{display:flex;gap:12px;flex-wrap:wrap}
+.linkbtn{align-self:flex-start;background:none;border:0;padding:6px 0;min-height:36px;font-size:14px;color:var(--muted);text-decoration:underline;cursor:pointer}
+.slip .linkbtn{align-self:center}
+.nopet .pet{visibility:hidden}
+.addwrap{display:flex;flex-direction:column;gap:20px;align-items:flex-start}
+dialog.pwdlg{border:0;border-radius:24px;padding:28px;box-shadow:0 20px 60px rgba(75,42,56,.35);width:min(380px,calc(100vw - 32px));background:#fff;color:var(--ink)}
+dialog.pwdlg::backdrop{background:rgba(75,42,56,.45)}
+
+/* питомец */
+.pet{position:fixed;left:0;bottom:calc(6px + env(safe-area-inset-bottom));z-index:30;width:var(--pet,96px);pointer-events:none;will-change:transform}
+.petbtn{pointer-events:auto;display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.petbtn:focus-visible{outline-offset:2px;border-radius:12px}
+.pet svg{display:block;width:100%;height:auto;overflow:visible;transform-origin:50% 100%}
+.flip.left{transform:scaleX(-1)}
+.lab{position:absolute;left:50%;bottom:100%;margin-bottom:6px;transform:translateX(-50%);white-space:nowrap;padding:0 12px;background:#fff;border:2px solid var(--line);border-radius:999px;font-family:var(--hand);font-weight:700;font-size:20px;line-height:26px;color:var(--tomato-text);box-shadow:0 4px 10px rgba(150,60,90,.14)}
+.bubble{position:absolute;left:50%;bottom:calc(100% + 40px);transform:translateX(calc(-50% + var(--shift,0px)));width:max-content;max-width:min(240px,calc(100vw - 24px));padding:10px 14px;background:#fff;border:2px solid var(--tomato-text);border-radius:16px;font-size:14px;line-height:1.4;color:var(--ink);box-shadow:0 8px 20px rgba(150,60,90,.18);animation:bpop .25s ease-out both}
+.bubble[hidden]{display:none}
+.bubble::after{content:"";position:absolute;top:100%;left:calc(50% - var(--shift,0px));width:12px;height:12px;background:#fff;border-right:2px solid var(--tomato-text);border-bottom:2px solid var(--tomato-text);transform:translate(-50%,-6px) rotate(45deg)}
+@keyframes bpop{from{opacity:0;margin-bottom:-8px}to{opacity:1;margin-bottom:0}}
+.petart .legs{transform-box:fill-box;transform-origin:50% 0}
+.pet.walk .petart{animation:bob .38s ease-in-out infinite}
+.pet.walk .l1,.pet.walk .l4{animation:step .38s ease-in-out infinite}
+.pet.walk .l2,.pet.walk .l3{animation:step .38s ease-in-out infinite reverse}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes step{0%,100%{transform:rotate(-24deg)}50%{transform:rotate(24deg)}}
+.petart .tail{transform-box:fill-box;transform-origin:100% 100%;animation:wag 1.8s ease-in-out infinite}
+@keyframes wag{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(9deg)}}
+.petart .eyes-shut,.petart .acc-bow,.petart .acc-crown{display:none}
+.pet.sleep .eyes-open{display:none}
+.pet.sleep .eyes-shut{display:inline}
+.pet.sleep .petart{animation:breathe 3.2s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.035)}}
+.petart.has-bow .acc-bow{display:inline}
+.petart.has-crown .acc-crown{display:inline}
+.zzz{display:none;position:absolute;right:-4px;top:-14px;font-family:var(--hand);font-weight:700;font-size:22px;color:var(--tomato-text);animation:zz 2.4s ease-in-out infinite}
+.pet.sleep .zzz{display:block}
+@keyframes zz{0%{opacity:0;transform:translate(0,6px)}30%{opacity:1}100%{opacity:0;transform:translate(8px,-14px)}}
+.hop.hop-go{animation:hop .65s cubic-bezier(.3,.7,.4,1)}
+@keyframes hop{0%,100%{transform:translateY(0)}45%{transform:translateY(calc(var(--pet,96px) * -.38))}}
+.burst{position:absolute;bottom:55%;color:#E8587F;font-size:18px;pointer-events:none;opacity:0;animation:burst 1.1s ease-out forwards}
+@keyframes burst{0%{opacity:0;transform:translate(0,0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx,0),-90px)}}
+
+@media (max-width:640px){
+  .wrap{padding:0 16px}
+  .stack{height:auto;display:flex;gap:16px;justify-content:center;padding:16px 0}
+  .stack .polaroid{position:relative;width:calc(50% - 8px);inset:auto}
+  .stack .a{transform:rotate(-4deg)} .stack .b{transform:rotate(3deg)}
+  .entry{padding:24px 20px}
+  .entry .date{font-size:32px}
+  .board{padding:24px 20px}
+  .sticker{font-size:28px}
+  .sticker.s1{right:62px} .sticker.s2{right:100px}
+  .row2{grid-template-columns:1fr}
+  .formcard{padding:20px 16px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}.panel{animation:none}.tab,.btn{transition:none}
+  .rv{opacity:1;translate:none;transition:none}
+  .hearts{display:none}
+  .pet *,.jarart svg,.slip{animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- значок сердечка для повторного использования -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="hrt" viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.5 3 5 6.4 5c2 0 3.7 1.1 5.6 3.2C13.9 6.1 15.6 5 17.6 5 21 5 23.1 8.5 21.6 11.9 19.5 16.4 12 21 12 21z"/></symbol></svg>
+
+<div class="hearts" id="hearts" aria-hidden="true"></div>
+
+<div class="wrap">
+
+<header class="top">
+  <div class="brand">
+    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.5 3 5 6.4 5c2 0 3.7 1.1 5.6 3.2C13.9 6.1 15.6 5 17.6 5 21 5 23.1 8.5 21.6 11.9 19.5 16.4 12 21 12 21z" fill="#E8587F"/></svg>
+    Наш уютный уголок
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Разделы сайта">
+    <button class="tab" role="tab" id="tab-home" aria-controls="home" aria-selected="true" data-tab="home">Главная</button>
+    <button class="tab" role="tab" id="tab-clock" aria-controls="clock" aria-selected="false" data-tab="clock">Часы</button>
+    <button class="tab" role="tab" id="tab-notes" aria-controls="notes" aria-selected="false" data-tab="notes">Заметки</button>
+    <button class="tab" role="tab" id="tab-jar" aria-controls="jar" aria-selected="false" data-tab="jar">Баночка</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ГЛАВНАЯ -->
+<section class="panel home" id="home" role="tabpanel" aria-labelledby="tab-home">
+  <div>
+    <p class="hand eyebrow">добро пожаловать</p>
+    <h1>Добро пожаловать в наш уютный уголок!</h1>
+    <!-- ВСТАВЬТЕ СВОЙ ТЕКСТ: приветственный абзац с вашего прежнего сайта (замените содержимое ниже) -->
+    <p class="lead">Я создал нам с тобой уютный сайт-уголок: здесь живут наши истории, события, фотографии и впечатления, а ещё счётчик времени, которое мы вместе.</p>
+    <div class="cta">
+      <button class="btn primary" data-go="clock">Посмотреть часы</button>
+      <button class="btn" data-go="notes">Читать заметки</button>
+    </div>
+    <div class="soonbox rv" aria-label="Обратный отсчёт">
+      <div class="r"><span class="k">До ближайшего месяца вместе</span><span class="v" id="sb-month">…</span></div>
+      <div class="r"><span class="k" id="sb-year-k">До первой годовщины</span><span class="v" id="sb-year">…</span></div>
+    </div>
+  </div>
+  <div class="stack" aria-hidden="false">
+    <figure class="polaroid a"><div class="ph"><img src="day-2026-10-04-1.jpg" alt="Бильярд" loading="lazy" style="object-position:50% 62%"></div></figure>
+    <figure class="polaroid b"><span class="tape" style="left:50%;margin-left:-46px;transform:rotate(-4deg)"></span><div class="ph"><img src="moment-3.jpg" alt="Момент перед фильмом" loading="lazy"></div></figure>
+  </div>
+</section>
+
+<!-- ЧАСЫ -->
+<section class="panel clock" id="clock" role="tabpanel" aria-labelledby="tab-clock" hidden>
+  <p class="hand eyebrow">часы</p>
+  <h2>Мы вместе уже...</h2>
+  <div class="board">
+    <div class="cells" role="timer" aria-live="off">
+      <div class="cell"><div class="n" id="c-years">0</div><div class="l" id="l-years">лет</div></div>
+      <div class="cell"><div class="n" id="c-months">0</div><div class="l" id="l-months">месяцев</div></div>
+      <div class="cell"><div class="n" id="c-days">0</div><div class="l" id="l-days">дней</div></div>
+      <div class="cell"><div class="n" id="c-hours">00</div><div class="l" id="l-hours">часов</div></div>
+      <div class="cell"><div class="n" id="c-minutes">00</div><div class="l" id="l-minutes">минут</div></div>
+      <div class="cell"><div class="n" id="c-seconds">00</div><div class="l" id="l-seconds">секунд</div></div>
+    </div>
+    <div class="since" id="since"></div>
+  </div>
+
+  <h3 class="sec">Наши вехи</h3>
+  <p class="next" id="next"></p>
+  <div class="badges" id="badges"></div>
+</section>
+
+<!-- ЗАМЕТКИ: сами записи лежат в notes.js -->
+<section class="panel notes" id="notes" role="tabpanel" aria-labelledby="tab-notes" hidden>
+  <div>
+    <h2>Наши заметки</h2>
+    <p class="sub">Истории, которые хочется сохранить</p>
+  </div>
+  <div class="addwrap" id="noteadd" hidden>
+    <button class="btn primary" id="noteopen" type="button" aria-expanded="false" aria-controls="noteform">＋ Добавить заметку</button>
+    <form class="formcard" id="noteform" hidden novalidate>
+      <h3>Новая заметка</h3>
+      <div class="row2">
+        <label class="fld">Дата<input type="date" id="nf-date" required></label>
+        <label class="fld">Кто пишет
+          <select id="nf-author"><option value="him">Он</option><option value="vika">Вика</option></select>
+        </label>
+      </div>
+      <fieldset class="fld"><legend>Настроение</legend><div class="moods" id="nf-moods"></div></fieldset>
+      <label class="fld">Заголовок (можно не писать)<input type="text" id="nf-title" maxlength="120" placeholder="Комментарий на сегодняшний день:"></label>
+      <label class="fld">Текст<textarea id="nf-text" maxlength="6000" required placeholder="Как прошёл день?"></textarea></label>
+      <label class="fld">Фото (до 4)<input type="file" id="nf-photos" accept="image/*" multiple></label>
+      <div class="thumbs" id="nf-thumbs"></div>
+      <p class="msg" id="nf-msg" role="status"></p>
+      <div class="formrow">
+        <button class="btn primary" id="nf-save" type="submit">Сохранить заметку</button>
+        <button class="btn" id="nf-cancel" type="button">Отмена</button>
+      </div>
+    </form>
+  </div>
+  <div id="entries" style="display:contents"></div>
+</section>
+
+<!-- БАНОЧКА КОМПЛИМЕНТОВ: записки лежат в jar.js -->
+<section class="panel jar" id="jar" role="tabpanel" aria-labelledby="tab-jar" hidden>
+  <h2>Баночка комплиментов</h2>
+  <p class="sub">Достань записку, когда захочется улыбнуться</p>
+  <div class="jarbox">
+    <div class="jarart" id="jarart" aria-hidden="true">
+      <svg viewBox="0 0 200 240">
+        <rect x="46" y="12" width="108" height="24" rx="7" fill="#E08FA7" stroke="#4B2A38" stroke-width="3"/>
+        <path d="M58 36h84v14c22 10 30 30 30 56v92c0 18-12 30-30 30H58c-18 0-30-12-30-30v-92c0-26 8-46 30-56z" fill="rgba(255,255,255,.7)" stroke="#4B2A38" stroke-width="3" stroke-linejoin="round"/>
+        <g stroke="#4B2A38" stroke-width="2" stroke-linejoin="round">
+          <rect x="44" y="176" width="34" height="42" rx="4" fill="#F6B1C3" transform="rotate(-14 61 197)"/>
+          <rect x="92" y="170" width="34" height="46" rx="4" fill="#FDE8EE" transform="rotate(9 109 193)"/>
+          <rect x="124" y="180" width="32" height="40" rx="4" fill="#F9D3DD" transform="rotate(-6 140 200)"/>
+          <rect x="64" y="146" width="32" height="42" rx="4" fill="#FDE8EE" transform="rotate(16 80 167)"/>
+          <rect x="104" y="140" width="34" height="42" rx="4" fill="#F6B1C3" transform="rotate(-10 121 161)"/>
+          <rect x="52" y="118" width="30" height="38" rx="4" fill="#F9D3DD" transform="rotate(-8 67 137)"/>
+          <rect x="118" y="112" width="30" height="38" rx="4" fill="#FDE8EE" transform="rotate(12 133 131)"/>
+        </g>
+        <g fill="#E8587F">
+          <use href="#hrt" x="54" y="190" width="16" height="16"/>
+          <use href="#hrt" x="100" y="184" width="16" height="16"/>
+          <use href="#hrt" x="72" y="156" width="14" height="14"/>
+          <use href="#hrt" x="112" y="150" width="16" height="16"/>
+          <use href="#hrt" x="128" y="190" width="14" height="14"/>
+        </g>
+        <path d="M44 106c0 -14 6 -26 18 -32" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+      </svg>
+    </div>
+    <button class="btn primary" id="jarbtn" type="button">Достать записку</button>
+    <div class="slip" id="slip" hidden aria-live="polite">
+      <span class="tape" style="left:50%;margin-left:-46px;transform:rotate(-3deg)"></span>
+      <p class="q" id="slipq"></p>
+      <span class="who" id="slipwho"></span>
+      <button class="linkbtn" id="slipdel" type="button" hidden>Удалить эту записку</button>
+    </div>
+    <p class="count" id="jarcount"></p>
+    <form class="formcard" id="jarform" hidden novalidate>
+      <h3>Написать свою записку</h3>
+      <label class="fld">Текст<textarea id="jf-text" maxlength="500" placeholder="Что хочется сказать?"></textarea></label>
+      <label class="fld">Кто пишет
+        <select id="jf-author"><option value="him">Он</option><option value="vika">Вика</option></select>
+      </label>
+      <p class="msg" id="jf-msg" role="status"></p>
+      <div class="formrow"><button class="btn primary" type="submit">Положить в баночку</button></div>
+    </form>
+  </div>
+</section>
+
+</main>
+</div>
+
+<dialog class="pwdlg" id="pwdlg" aria-labelledby="pwt">
+  <form id="pwform" style="display:flex;flex-direction:column;gap:14px">
+    <h3 id="pwt" style="font-family:var(--display);font-weight:600;font-size:20px">Пароль сайта</h3>
+    <p style="margin:0;font-size:14px;color:var(--muted)">Он нужен, чтобы писать и удалять. Спросим один раз на этом устройстве.</p>
+    <label class="fld">Пароль<input type="password" id="pw-in" autocomplete="current-password"></label>
+    <p class="msg err" id="pw-msg" role="alert"></p>
+    <div class="formrow"><button class="btn primary" type="submit">Войти</button><button class="btn" id="pw-cancel" type="button">Отмена</button></div>
+  </form>
+</dialog>
+
+<!-- ПИТОМЕЦ: растёт на один шаг с каждым днём вместе -->
+<div class="pet" id="pet" style="--pet:96px">
+  <div class="bubble" id="bubble" role="status" aria-live="polite" hidden></div>
+  <div class="lab" id="petlab">0 дней</div>
+  <span class="zzz" aria-hidden="true">z z z</span>
+  <button class="petbtn" id="petbtn" type="button" aria-label="Наш питомец. Нажми, чтобы погладить">
+    <div class="hop" id="pethop"><div class="flip" id="petflip">
+      <svg class="petart" id="petsvg" viewBox="0 0 130 100" aria-hidden="true">
+        <path class="tail" d="M26 68C6 62 4 40 16 30" fill="none" stroke="#4B2A38" stroke-width="12" stroke-linecap="round"/>
+        <path class="tail" d="M26 68C6 62 4 40 16 30" fill="none" stroke="#F7BFCD" stroke-width="7" stroke-linecap="round"/>
+        <g stroke="#4B2A38" stroke-width="2.5" fill="#F7BFCD">
+          <ellipse class="legs l1" cx="36" cy="86" rx="7" ry="12"/>
+          <ellipse class="legs l2" cx="50" cy="88" rx="7" ry="11"/>
+          <ellipse class="legs l3" cx="80" cy="88" rx="7" ry="11"/>
+          <ellipse class="legs l4" cx="94" cy="86" rx="7" ry="12"/>
+          <ellipse cx="62" cy="66" rx="40" ry="24"/>
+        </g>
+        <ellipse cx="66" cy="77" rx="22" ry="9" fill="#FDE8EE"/>
+        <g stroke="#4B2A38" stroke-width="2.5" stroke-linejoin="round">
+          <polygon points="78,36 80,10 98,26" fill="#F7BFCD"/>
+          <polygon points="100,24 116,10 118,38" fill="#F7BFCD"/>
+        </g>
+        <polygon points="83,30 84,18 93,26" fill="#EE8FA8"/>
+        <polygon points="105,25 112,18 113,33" fill="#EE8FA8"/>
+        <circle cx="98" cy="46" r="24" fill="#F7BFCD" stroke="#4B2A38" stroke-width="2.5"/>
+        <ellipse cx="84" cy="54" rx="5" ry="3.2" fill="#F28BA6" opacity=".55"/>
+        <ellipse cx="112" cy="54" rx="5" ry="3.2" fill="#F28BA6" opacity=".55"/>
+        <g class="eyes-open" fill="#4B2A38">
+          <circle cx="88" cy="44" r="3.4"/><circle cx="108" cy="44" r="3.4"/>
+          <circle cx="89.2" cy="42.8" r="1.1" fill="#fff"/><circle cx="109.2" cy="42.8" r="1.1" fill="#fff"/>
+        </g>
+        <g class="eyes-shut" fill="none" stroke="#4B2A38" stroke-width="2.2" stroke-linecap="round">
+          <path d="M84 45q4 4 8 0"/><path d="M104 45q4 4 8 0"/>
+        </g>
+        <path d="M95 51h6l-3 4z" fill="#E8587F" stroke="#E8587F" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M98 55q-3 4-6 2M98 55q3 4 6 2" fill="none" stroke="#4B2A38" stroke-width="1.8" stroke-linecap="round"/>
+        <g stroke="#4B2A38" stroke-width="1.4" stroke-linecap="round">
+          <line x1="82" y1="52" x2="70" y2="50"/><line x1="82" y1="55" x2="70" y2="57"/>
+          <line x1="114" y1="52" x2="126" y2="50"/><line x1="114" y1="55" x2="126" y2="57"/>
+        </g>
+        <g class="acc-bow" fill="#E8587F" stroke="#4B2A38" stroke-width="2" stroke-linejoin="round">
+          <path d="M98 24l-11-7v14z"/><path d="M98 24l11-7v14z"/><circle cx="98" cy="24" r="3.5" fill="#C23B62"/>
+        </g>
+        <path class="acc-crown" d="M86 25L88 10L93 18L98 8L103 18L108 10L110 25Z" fill="#F6C85F" stroke="#4B2A38" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </div></div>
+  </button>
+</div>
+
+<script src="notes.js"></script>
+<script src="jar.js"></script>
+<script>
+(function () {
+  'use strict';
+  /* НАЧАЛО ОТСЧЁТА: 19 августа 2026, 20:30 (формат ГГГГ-ММ-ДДTЧЧ:ММ:СС, местное время). */
+  var START_DATE = '2026-08-19T20:30:00';
+
+  /* ---------- общие помощники ---------- */
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function pl(k, f) { var a = Math.abs(k) % 100, b = a % 10; return a > 10 && a < 20 ? f[2] : b > 1 && b < 5 ? f[1] : b === 1 ? f[0] : f[2]; }
+  function p2(v) { return String(v).padStart(2, '0'); }
+  function set(id, v) { var e = $(id); if (e && e.textContent !== v) e.textContent = v; }
+  var DAYW = ['день', 'дня', 'дней'];
+  var RM = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var AUTH = window.AUTHORS || {};
+  var PET_RENDER = function () {}; /* заменяется функцией питомца ниже */
+  var io = null; /* наблюдатель для плавного появления */
+  function observeRv() {
+    var items = document.querySelectorAll('.rv:not(.in)');
+    if (RM || !('IntersectionObserver' in window)) { items.forEach(function (e) { e.classList.add('in'); }); return; }
+    if (!io) return;
+    items.forEach(function (e) { io.observe(e); });
+  }
+
+  var start = new Date(START_DATE);
+  if (isNaN(start.getTime())) start = new Date();
+  function addDays(n) { return new Date(start.getTime() + n * 864e5); }
+  function addHours(n) { return new Date(start.getTime() + n * 36e5); }
+  function addMonths(k) { var d = new Date(start.getTime()); d.setMonth(d.getMonth() + k); return d; }
+  function addYears(k) { var d = new Date(start.getTime()); d.setFullYear(d.getFullYear() + k); return d; }
+  /* сколько дней вы встречаетесь (примерно, по ближайшему целому) */
+  function daysTogether() { return Math.max(0, Math.round((Date.now() - start) / 864e5)); }
+  /* сколько календарных дней осталось до даты (0 = сегодня) */
+  function daysLeft(date) {
+    var a = new Date(date.getFullYear(), date.getMonth(), date.getDate()), n = new Date();
+    var b = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+    return Math.max(0, Math.round((a - b) / 864e5));
+  }
+  function leftTxt(date) { var d = daysLeft(date); return d === 0 ? 'сегодня' : 'через ' + d + ' ' + pl(d, DAYW); }
+  function leftNum(date) { var d = daysLeft(date); return d + ' ' + pl(d, DAYW); }
+
+  /* ---------- вкладки ---------- */
+  var TABS = ['home', 'clock', 'notes', 'jar'];
+  var TITLES = {
+    home: 'Наш уютный уголок ❤️', clock: 'Часы · Наш уютный уголок',
+    notes: 'Заметки · Наш уютный уголок', jar: 'Баночка · Наш уютный уголок'
+  };
+  var current = null, tabHooks = [];
+  function show(tab, fromHash) {
+    if (TABS.indexOf(tab) < 0) tab = 'home';
+    TABS.forEach(function (t) {
+      var on = t === tab;
+      $(t).hidden = !on;
+      $('tab-' + t).setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    document.title = TITLES[tab];
+    if (!fromHash) {
+      /* в песочнице предпросмотра адрес менять нельзя: вкладки работают и без этого */
+      try { history.replaceState(null, '', '#' + tab); } catch (e) {}
+      window.scrollTo(0, 0);
+    }
+    var changed = current !== null && current !== tab;
+    current = tab;
+    if (changed) tabHooks.forEach(function (f) { f(tab); });
+  }
+  document.querySelectorAll('[data-tab]').forEach(function (b) {
+    b.addEventListener('click', function () { show(b.getAttribute('data-tab')); });
+  });
+  document.querySelectorAll('[data-go]').forEach(function (b) {
+    b.addEventListener('click', function () { show(b.getAttribute('data-go')); });
+  });
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1), true); });
+
+  /* если файла с фото рядом нет, вместо сломанной картинки показываем рамку */
+  function guardImg(img) {
+    img.addEventListener('error', function () { img.hidden = true; img.parentNode.classList.add('empty'); });
+  }
+  document.querySelectorAll('.ph img').forEach(guardImg);
+
+  /* ---------- сервер (функции Netlify): общие записки и заметки ---------- */
+  var backend = false, canWrite = false, jarDyn = [], notesDyn = [];
+  var MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+  function fmtDate(iso) { var p = String(iso).split('-'); return parseInt(p[2], 10) + ' ' + MONTHS[parseInt(p[1], 10) - 1] + ' ' + p[0]; }
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+  function allJar() { return (window.JAR || []).concat(jarDyn); }
+  function allNotes() {
+    return (window.NOTES || []).concat(notesDyn).sort(function (a, b) { return a.sort < b.sort ? 1 : a.sort > b.sort ? -1 : 0; });
+  }
+  function toNote(n) {
+    return {
+      id: n.id, dyn: true, date: fmtDate(n.date), sort: n.sort, author: n.author, mood: n.mood, stickers: [],
+      title: n.title || 'Комментарий на сегодняшний день:', text: n.text,
+      photos: (n.photos || []).map(function (id) { return { src: '/api/photo/' + id, alt: '' }; })
+    };
+  }
+  function api(method, path, o) {
+    o = o || {};
+    var h = {}, init = { method: method, headers: h, cache: 'no-store' };
+    if (o.pw) h['x-site-password'] = o.pw;
+    if (o.json !== undefined) { h['content-type'] = 'application/json'; init.body = JSON.stringify(o.json); }
+    if (o.form) init.body = o.form;
+    return fetch(path, init).then(function (res) {
+      return res.json().catch(function () { return null; }).then(function (data) {
+        return { ok: res.ok, status: res.status, data: data, error: data && data.error };
+      });
+    }, function () { return { ok: false, status: 0, data: null, error: 'Нет связи с сайтом. Проверьте интернет.' }; });
+  }
+
+  /* пароль: спрашиваем один раз, запоминаем на этом устройстве */
+  var dlg = $('pwdlg'), pwIn = $('pw-in'), pwMsg = $('pw-msg'), pwResolve = null;
+  function askPw(msg) {
+    return new Promise(function (resolve) {
+      if (typeof dlg.showModal !== 'function') { resolve(window.prompt('Пароль сайта') || null); return; }
+      pwResolve = resolve; pwIn.value = ''; pwMsg.textContent = msg || '';
+      if (!dlg.open) dlg.showModal();
+      pwIn.focus();
+    });
+  }
+  function closePw(val) { var r = pwResolve; pwResolve = null; if (dlg.open) dlg.close(); if (r) r(val); }
+  $('pwform').addEventListener('submit', function (e) { e.preventDefault(); closePw(pwIn.value || null); });
+  $('pw-cancel').addEventListener('click', function () { closePw(null); });
+  dlg.addEventListener('cancel', function (e) { e.preventDefault(); closePw(null); });
+  function ensurePassword(forceAsk) {
+    var saved = forceAsk ? null : lsGet('love_pw');
+    if (saved) return Promise.resolve(saved);
+    function loop(msg) {
+      return askPw(msg).then(function (v) {
+        if (v == null) return null;
+        return api('POST', '/api/auth', { pw: v }).then(function (r) {
+          if (r.ok) { lsSet('love_pw', v); return v; }
+          return loop(r.status === 401 ? 'Неверный пароль' : (r.error || 'Не получилось проверить пароль'));
+        });
+      });
+    }
+    return loop('');
+  }
+  /* запрос с паролем; при отказе спросит пароль заново и повторит один раз */
+  function authed(method, path, o) {
+    return ensurePassword(false).then(function (pw) {
+      if (!pw) return { ok: false, cancelled: true, error: 'Отменено' };
+      o.pw = pw;
+      return api(method, path, o).then(function (r) {
+        if (r.status !== 401) return r;
+        lsSet('love_pw', null);
+        return ensurePassword(true).then(function (pw2) {
+          if (!pw2) return { ok: false, cancelled: true, error: 'Отменено' };
+          o.pw = pw2; return api(method, path, o);
+        });
+      });
+    });
+  }
+
+  /* ---------- заметки: из notes.js и добавленные на сайте ---------- */
+  var TAPE_TILT = [2, -3, 3];
+  function renderNotes() {
+    var box = $('entries'); box.textContent = '';
+    var list = allNotes();
+    if (!list.length) { box.appendChild(el('p', 'empty-note', 'Пока здесь нет заметок.')); return; }
+    list.forEach(function (n, i) {
+      var art = el('article', 'entry rv');
+      if (n.id) art.setAttribute('data-id', n.id);
+      var tape = el('span', 'tape');
+      if (i % 2 === 0) { tape.style.right = '40px'; }
+      else { tape.style.left = '40px'; tape.style.background = 'rgba(255,214,190,.85)'; }
+      tape.style.transform = 'rotate(' + TAPE_TILT[i % 3] + 'deg)';
+      art.appendChild(tape);
+
+      if (n.mood) { var mood = el('span', 'mood', n.mood); mood.setAttribute('aria-hidden', 'true'); art.appendChild(mood); }
+      (n.stickers || []).slice(0, 3).forEach(function (st, k) {
+        var sp = el('span', 'sticker s' + k, st); sp.setAttribute('aria-hidden', 'true'); art.appendChild(sp);
+      });
+
+      var meta = el('div', 'meta');
+      meta.appendChild(el('span', 'hand date', n.date));
+      var a = AUTH[n.author];
+      if (a) { var who = el('span', 'who', a.label); who.style.background = a.color; meta.appendChild(who); }
+      art.appendChild(meta);
+
+      if (n.title) art.appendChild(el('h3', null, n.title));
+      art.appendChild(el('p', 'text', n.text));
+
+      var shots = el('div', 'shots'), videoSrc = null;
+      (n.photos || []).forEach(function (p, k) {
+        var tile = el('div', 'tile rv');
+        tile.style.transitionDelay = (k * 90) + 'ms';
+        if (p.video) {
+          videoSrc = p.video;
+          var v = document.createElement('video');
+          v.controls = true; v.setAttribute('playsinline', ''); v.preload = 'metadata';
+          if (p.poster) v.poster = p.poster;
+          var so = document.createElement('source'); so.src = p.video; so.type = 'video/mp4';
+          v.appendChild(so);
+          v.appendChild(document.createTextNode('Ваш браузер не воспроизводит это видео.'));
+          tile.appendChild(v);
+        } else {
+          var img = document.createElement('img');
+          img.src = p.src; img.alt = p.alt || ''; img.loading = 'lazy';
+          if (p.pos) img.style.objectPosition = p.pos;
+          guardImg(img);
+          tile.appendChild(img);
+        }
+        shots.appendChild(tile);
+      });
+      if (shots.children.length) art.appendChild(shots);
+      if (n.download && videoSrc) {
+        var dl = el('a', 'dl', 'Скачать видео'); dl.href = videoSrc; dl.setAttribute('download', '');
+        art.appendChild(dl);
+      }
+      if (n.dyn) {
+        var del = el('button', 'linkbtn', 'Удалить заметку'); del.type = 'button';
+        del.addEventListener('click', function () { removeNote(n); });
+        art.appendChild(del);
+      }
+      box.appendChild(art);
+    });
+    observeRv();
+  }
+  function removeNote(n) {
+    if (!window.confirm('Удалить эту заметку вместе с фото? Это нельзя отменить.')) return;
+    authed('DELETE', '/api/note/' + n.id, {}).then(function (r) {
+      if (r.cancelled) return;
+      if (!r.ok) { window.alert(r.error || 'Не получилось удалить'); return; }
+      notesDyn = notesDyn.filter(function (x) { return x.id !== n.id; });
+      renderNotes();
+    });
+  }
+  renderNotes();
+
+  /* ---------- счётчик ---------- */
+  function renderSince() {
+    var days = daysTogether();
+    set('since', 'Мы встречаемся примерно ' + days.toLocaleString('ru-RU') + ' ' + pl(days, DAYW));
+  }
+  function tickClock() {
+    var n = new Date(), s = start > n ? n : start;
+    var y = n.getFullYear() - s.getFullYear(), m = n.getMonth() - s.getMonth(), d = n.getDate() - s.getDate();
+    var h = n.getHours() - s.getHours(), mi = n.getMinutes() - s.getMinutes(), sec = n.getSeconds() - s.getSeconds();
+    if (sec < 0) { sec += 60; mi--; }
+    if (mi < 0) { mi += 60; h--; }
+    if (h < 0) { h += 24; d--; }
+    if (d < 0) { d += new Date(n.getFullYear(), n.getMonth(), 0).getDate(); m--; }
+    if (m < 0) { m += 12; y--; }
+    set('c-years', String(y));   set('l-years', pl(y, ['год', 'года', 'лет']));
+    set('c-months', String(m));  set('l-months', pl(m, ['месяц', 'месяца', 'месяцев']));
+    set('c-days', String(d));    set('l-days', pl(d, DAYW));
+    set('c-hours', p2(h));       set('l-hours', pl(h, ['час', 'часа', 'часов']));
+    set('c-minutes', p2(mi));    set('l-minutes', pl(mi, ['минута', 'минуты', 'минут']));
+    set('c-seconds', p2(sec));   set('l-seconds', pl(sec, ['секунда', 'секунды', 'секунд']));
+    renderSince();
+  }
+
+  /* ---------- вехи и бейджи ---------- */
+  var MS = [
+    { t: '1 неделя',   i: '🌱', at: addDays(7) },
+    { t: '1 месяц',    i: '🌷', at: addMonths(1) },
+    { t: '50 дней',    i: '⭐', at: addDays(50) },
+    { t: '1000 часов', i: '⏳', at: addHours(1000) },
+    { t: '2 месяца',   i: '🎀', at: addMonths(2) },
+    { t: '3 месяца',   i: '💐', at: addMonths(3) },
+    { t: '100 дней',   i: '💯', at: addDays(100) },
+    { t: '6 месяцев',  i: '🌸', at: addMonths(6) },
+    { t: '200 дней',   i: '🍀', at: addDays(200) },
+    { t: '1 год',      i: '🎂', at: addYears(1) },
+    { t: '500 дней',   i: '🏆', at: addDays(500) },
+    { t: '2 года',     i: '🥂', at: addYears(2) },
+    { t: '1000 дней',  i: '👑', at: addDays(1000) }
+  ].sort(function (a, b) { return a.at - b.at; });
+  (function buildBadges() {
+    var box = $('badges');
+    MS.forEach(function (m, k) {
+      var b = el('div', 'badge rv');
+      b.style.transitionDelay = (k * 50) + 'ms';
+      var ic = el('div', 'ic', m.i); ic.setAttribute('aria-hidden', 'true');
+      b.appendChild(ic); b.appendChild(el('div', 't', m.t)); b.appendChild(el('div', 's', ''));
+      m.node = b; box.appendChild(b);
+    });
+  })();
+  var nextBuilt = false;
+  function renderMilestones() {
+    var now = Date.now(), nextM = null;
+    MS.forEach(function (m) {
+      var earned = m.at <= now;
+      if (!earned && !nextM) nextM = m;
+      var isNext = m === nextM;
+      var cls = 'badge rv' + (earned ? '' : ' locked') + (isNext ? ' soon' : '') + (m.node.classList.contains('in') ? ' in' : '');
+      if (m.node.className !== cls) m.node.className = cls;
+      var s = m.node.lastChild, txt;
+      if (earned) { txt = 'получено ✓'; }
+      else { txt = leftTxt(m.at); }
+      if (s.textContent !== txt) s.textContent = txt;
+    });
+    var nx = $('next');
+    if (!nextM) { set('next', 'Все вехи пройдены! 🎉'); return; }
+    if (!nextBuilt) {
+      nx.textContent = '';
+      nx.appendChild(document.createTextNode('Ближайшая веха: '));
+      nx.appendChild(el('b', null, '')); nx.appendChild(document.createTextNode(', ')); nx.appendChild(el('b', null, ''));
+      nextBuilt = true;
+    }
+    var bs = nx.querySelectorAll('b');
+    if (bs[0].textContent !== nextM.t) bs[0].textContent = nextM.t;
+    var t2 = leftTxt(nextM.at);
+    if (bs[1].textContent !== t2) bs[1].textContent = t2;
+  }
+
+  /* ---------- обратный отсчёт на главной ---------- */
+  var ORD = ['первой', 'второй', 'третьей', 'четвёртой', 'пятой', 'шестой', 'седьмой', 'восьмой', 'девятой', 'десятой'];
+  /* ближайшая дата вида «старт + k шагов»; если сегодня такая дата уже была/есть, возвращает признак */
+  function nextOf(addFn) {
+    var now = new Date(), k = 1, prev = null;
+    while (addFn(k) <= now && k < 2000) { prev = addFn(k); k++; }
+    var isToday = (prev && prev.toDateString() === now.toDateString()) || addFn(k).toDateString() === now.toDateString();
+    return { k: k, date: addFn(k), today: isToday };
+  }
+  function renderSoon() {
+    var mo = nextOf(addMonths);
+    set('sb-month', mo.today ? 'сегодня 🎉' : leftNum(mo.date));
+    var yr = nextOf(addYears);
+    set('sb-year-k', 'До ' + (ORD[yr.k - 1] || (yr.k + '-й')) + ' годовщины');
+    set('sb-year', yr.today ? 'сегодня 🎉' : leftNum(yr.date));
+  }
+
+  /* ---------- баночка комплиментов: из jar.js и написанные на сайте ---------- */
+  var jarBag = [], jarLast = null, jarCur = null, jarFirst = true;
+  function updateJarCount() {
+    var n = allJar().length, btn = $('jarbtn');
+    $('jarcount').textContent = n ? 'Записок в баночке: ' + n : '';
+    btn.disabled = !n;
+    btn.textContent = !n ? 'Баночка пока пустая' : jarFirst ? 'Достать записку' : 'Достать ещё одну';
+    jarBag = [];
+  }
+  $('jarbtn').addEventListener('click', function () {
+    if (!jarBag.length) {
+      jarBag = allJar().slice();
+      for (var i = jarBag.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = jarBag[i]; jarBag[i] = jarBag[j]; jarBag[j] = t; }
+      if (jarBag.length > 1 && jarBag[jarBag.length - 1] === jarLast) { jarBag.unshift(jarBag.pop()); }
+    }
+    var item = jarBag.pop(), a = AUTH[item.from], slip = $('slip');
+    jarLast = item; jarCur = item;
+    $('slipq').textContent = '«' + item.text + '»';
+    var who = $('slipwho');
+    who.textContent = a ? a.label : ''; who.style.background = a ? a.color : 'transparent'; who.hidden = !a;
+    $('slipdel').hidden = !(item.id && backend && canWrite);
+    slip.hidden = false;
+    slip.classList.remove('pop'); void slip.offsetWidth; slip.classList.add('pop');
+    var art = $('jarart'); art.classList.remove('shake'); void art.offsetWidth; art.classList.add('shake');
+    if (jarFirst) { jarFirst = false; $('jarbtn').textContent = 'Достать ещё одну'; }
+  });
+  $('slipdel').addEventListener('click', function () {
+    var item = jarCur; if (!item || !item.id) return;
+    if (!window.confirm('Удалить эту записку из баночки?')) return;
+    authed('DELETE', '/api/jar/' + item.id, {}).then(function (r) {
+      if (r.cancelled) return;
+      if (!r.ok) { window.alert(r.error || 'Не получилось удалить'); return; }
+      jarDyn = jarDyn.filter(function (x) { return x.id !== item.id; });
+      $('slip').hidden = true; jarCur = null; updateJarCount();
+    });
+  });
+  updateJarCount();
+
+  /* ---------- формы: написать записку и добавить заметку ---------- */
+  function setMsg(id, text, kind) { var m = $(id); m.textContent = text || ''; m.className = 'msg' + (kind ? ' ' + kind : ''); }
+  function rememberAuthor(sel) { var v = lsGet('love_author'); if (v === 'him' || v === 'vika') sel.value = v; sel.addEventListener('change', function () { lsSet('love_author', sel.value); }); }
+  rememberAuthor($('jf-author')); rememberAuthor($('nf-author'));
+
+  $('jarform').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var text = $('jf-text').value.trim();
+    if (!text) { setMsg('jf-msg', 'Напишите текст записки', 'err'); return; }
+    var btn = e.target.querySelector('button[type=submit]'); btn.disabled = true; setMsg('jf-msg', 'Кладём в баночку…');
+    authed('POST', '/api/jar', { json: { text: text, from: $('jf-author').value } }).then(function (r) {
+      btn.disabled = false;
+      if (r.cancelled) { setMsg('jf-msg', ''); return; }
+      if (!r.ok) { setMsg('jf-msg', r.error || 'Не получилось сохранить', 'err'); return; }
+      jarDyn.unshift(r.data); $('jf-text').value = ''; updateJarCount();
+      setMsg('jf-msg', 'Записка лежит в баночке 💌', 'ok');
+    });
+  });
+
+  var MOOD_LIST = ['💗', '🎬', '🎱', '🏡', '☕', '🌷', '🍕', '✈️', '🎁', '😊', '🌙', '🎉'];
+  MOOD_LIST.forEach(function (m, i) {
+    var lab = document.createElement('label'), inp = document.createElement('input');
+    inp.type = 'radio'; inp.name = 'nf-mood'; inp.value = m; inp.setAttribute('aria-label', 'Настроение ' + m);
+    if (i === 0) inp.checked = true;
+    lab.appendChild(inp); lab.appendChild(el('span', null, m)); $('nf-moods').appendChild(lab);
+  });
+  function todayISO() { var d = new Date(); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()); }
+  function toggleNoteForm(open) {
+    var f = $('noteform'); f.hidden = !open;
+    $('noteopen').setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (typeof syncPet === 'function') syncPet();
+    if (open) { if (!$('nf-date').value) $('nf-date').value = todayISO(); setMsg('nf-msg', ''); $('nf-text').focus(); }
+  }
+  $('noteopen').addEventListener('click', function () { toggleNoteForm($('noteform').hidden); });
+  $('nf-cancel').addEventListener('click', function () { toggleNoteForm(false); });
+  $('nf-photos').addEventListener('change', function () {
+    var box = $('nf-thumbs'); box.textContent = '';
+    var files = Array.prototype.slice.call(this.files || []);
+    if (files.length > 4) setMsg('nf-msg', 'Можно прикрепить не больше 4 фото', 'err'); else setMsg('nf-msg', '');
+    files.slice(0, 4).forEach(function (f) {
+      var im = document.createElement('img'); im.alt = ''; im.src = URL.createObjectURL(f);
+      im.onload = function () { URL.revokeObjectURL(im.src); }; box.appendChild(im);
+    });
+  });
+  /* уменьшаем фото до 1600 пикселей, чтобы быстро загружались и не упирались в лимиты */
+  function compress(file) {
+    return new Promise(function (res, rej) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+        var c = document.createElement('canvas');
+        c.width = Math.round(img.naturalWidth * k); c.height = Math.round(img.naturalHeight * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        c.toBlob(function (b) { b ? res(b) : rej(new Error('toBlob')); }, 'image/jpeg', 0.82);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('load')); };
+      img.src = url;
+    });
+  }
+  $('noteform').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var text = $('nf-text').value.trim(), date = $('nf-date').value;
+    var files = Array.prototype.slice.call($('nf-photos').files || []);
+    if (!date) { setMsg('nf-msg', 'Укажите дату', 'err'); return; }
+    if (!text) { setMsg('nf-msg', 'Напишите текст заметки', 'err'); return; }
+    if (files.length > 4) { setMsg('nf-msg', 'Можно прикрепить не больше 4 фото', 'err'); return; }
+    var btn = $('nf-save'); btn.disabled = true; setMsg('nf-msg', files.length ? 'Готовим фото…' : 'Сохраняем…');
+    Promise.all(files.map(compress)).then(function (blobs) {
+      var total = blobs.reduce(function (s2, b) { return s2 + b.size; }, 0);
+      if (total > 5.2 * 1024 * 1024) throw new Error('big');
+      var fd = new FormData();
+      fd.append('date', date); fd.append('author', $('nf-author').value);
+      var mood = document.querySelector('input[name=nf-mood]:checked'); fd.append('mood', mood ? mood.value : '');
+      fd.append('title', $('nf-title').value.trim() || 'Комментарий на сегодняшний день:');
+      fd.append('text', text);
+      blobs.forEach(function (b, i) { fd.append('photos', b, 'photo-' + (i + 1) + '.jpg'); });
+      setMsg('nf-msg', 'Сохраняем…');
+      return authed('POST', '/api/note', { form: fd });
+    }).then(function (r) {
+      btn.disabled = false;
+      if (!r || r.cancelled) { setMsg('nf-msg', ''); return; }
+      if (!r.ok) { setMsg('nf-msg', r.error || 'Не получилось сохранить', 'err'); return; }
+      notesDyn.unshift(toNote(r.data)); renderNotes();
+      $('noteform').reset(); $('nf-thumbs').textContent = ''; $('nf-date').value = todayISO();
+      var first = document.querySelector('#entries [data-id="' + r.data.id + '"]');
+      toggleNoteForm(false);
+      if (first) { first.classList.add('in'); first.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'start' }); }
+    }).catch(function (err) {
+      btn.disabled = false;
+      setMsg('nf-msg', err && err.message === 'big' ? 'Фото слишком тяжёлые, попробуйте меньше' : 'Не получилось обработать фото', 'err');
+    });
+  });
+
+  /* ---------- общие данные с сервера ---------- */
+  /* пока открыта форма, питомца прячем, чтобы он не закрывал кнопки */
+  function syncPet() {
+    var hide = (current === 'jar' && backend && canWrite) || !$('noteform').hidden;
+    document.body.classList.toggle('nopet', hide);
+  }
+  tabHooks.push(syncPet);
+  function applyBackend() { var on = backend && canWrite; $('noteadd').hidden = !on; $('jarform').hidden = !on; syncPet(); }
+  function loadRemote() {
+    if (location.protocol === 'file:') return;
+    api('GET', '/api/data').then(function (r) {
+      if (!r.ok || !r.data || !Array.isArray(r.data.jar) || !Array.isArray(r.data.notes)) return;
+      backend = true; canWrite = !!r.data.canWrite;
+      jarDyn = r.data.jar; notesDyn = r.data.notes.map(toNote);
+      applyBackend(); renderNotes(); updateJarCount();
+    });
+  }
+
+  /* ---------- плавное появление и сердечки ---------- */
+  (function fx() {
+    if (!RM && 'IntersectionObserver' in window) {
+      io = new IntersectionObserver(function (list) {
+        list.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+    }
+    observeRv();
+    if (RM) return;
+    var box = $('hearts'), colors = ['#E8587F', '#F6B1C3', '#E08FA7'];
+    for (var i = 0; i < 14; i++) {
+      var s = el('span', null, '♥');
+      s.style.left = rand(2, 98).toFixed(1) + '%';
+      s.style.fontSize = Math.round(rand(12, 26)) + 'px';
+      s.style.color = colors[i % 3];
+      var dur = rand(16, 30);
+      s.style.animationDuration = dur.toFixed(1) + 's';
+      s.style.animationDelay = (-rand(0, dur)).toFixed(1) + 's';
+      box.appendChild(s);
+    }
+  })();
+
+  /* ---------- питомец ---------- */
+  (function petmod() {
+    var pet = $('pet'), btn = $('petbtn'), flip = $('petflip'), hopEl = $('pethop'),
+        lab = $('petlab'), bubble = $('bubble'), svg = $('petsvg');
+    var P = { x: 16, dir: 1, mode: 'sit', t: 2, speed: 70, w: 96, days: -1 }, bt = null, hopping = false;
+
+    function isNight() { var h = new Date().getHours(); return h >= 23 || h < 7; }
+    function bounds() { return { min: 8, max: Math.max(8, window.innerWidth - P.w - 8) }; }
+    function place() { pet.style.transform = 'translateX(' + Math.round(P.x) + 'px)'; }
+    function setMode(m, sec) {
+      P.mode = m; P.t = sec;
+      pet.classList.toggle('walk', m === 'walk');
+      pet.classList.toggle('sleep', m === 'sleep');
+      flip.classList.toggle('left', P.dir < 0);
+    }
+
+    /* размер и украшения зависят от числа дней вместе */
+    function renderPet() {
+      var d = daysTogether();
+      if (d === P.days) return;
+      P.days = d;
+      P.w = Math.round(Math.min(190, 70 + d * 0.32));
+      P.speed = P.w * 0.75;
+      pet.style.setProperty('--pet', P.w + 'px');
+      var txt = d + ' ' + pl(d, DAYW);
+      lab.textContent = txt;
+      btn.setAttribute('aria-label', 'Наш питомец, ему ' + txt + '. Нажми, чтобы погладить');
+      svg.setAttribute('class', 'petart' + (d >= 100 ? ' has-crown' : d >= 50 ? ' has-bow' : ''));
+      var b = bounds(); if (P.x > b.max) { P.x = b.max; place(); }
+    }
+    PET_RENDER = renderPet;
+
+    function placeBubble() {
+      bubble.style.setProperty('--shift', '0px');
+      var r = bubble.getBoundingClientRect(), sh = 0;
+      if (r.left < 8) sh = 8 - r.left; else if (r.right > window.innerWidth - 8) sh = window.innerWidth - 8 - r.right;
+      bubble.style.setProperty('--shift', Math.round(sh) + 'px');
+    }
+    function say(text, ms, pause) {
+      bubble.textContent = text; bubble.hidden = false; placeBubble();
+      clearTimeout(bt); bt = setTimeout(function () { bubble.hidden = true; }, ms);
+      if (pause && !RM) setMode('sit', ms / 1000);
+    }
+    function hop() {
+      if (RM || hopping) return;
+      hopping = true; hopEl.classList.add('hop-go');
+      setTimeout(function () { hopEl.classList.remove('hop-go'); hopping = false; }, 680);
+    }
+    function burst() {
+      if (RM) return;
+      for (var i = 0; i < 6; i++) {
+        var s = el('span', 'burst', '♥');
+        s.style.left = Math.round(rand(25, 70)) + '%';
+        s.style.setProperty('--dx', Math.round(rand(-50, 50)) + 'px');
+        s.style.animationDelay = (i * 60) + 'ms';
+        pet.appendChild(s);
+        (function (n) { setTimeout(function () { n.remove(); }, 1500); })(s);
+      }
+    }
+
+    btn.addEventListener('click', function () {
+      var d = P.days, jar = allJar(), line;
+      if (Math.random() < 0.4 || !jar.length) {
+        line = 'Мур! Мне уже ' + d + ' ' + pl(d, DAYW) + ', и каждый из них с вами 💗';
+      } else {
+        var j = jar[Math.floor(Math.random() * jar.length)], a = AUTH[j.from];
+        line = '«' + j.text + '»' + (a ? ' — ' + a.label : '');
+      }
+      say(line, 3800 + line.length * 35, true);
+      burst(); hop();
+    });
+
+    var TAB_LINES = {
+      clock: 'Тик-так… это время про нас ⏰',
+      notes: 'Ой, давай почитаем 📖',
+      jar: 'Достань записку, мне тоже интересно 💌'
+    };
+    tabHooks.push(function (tab) { if (TAB_LINES[tab]) say(TAB_LINES[tab], 2800, false); });
+
+    window.addEventListener('resize', function () {
+      var b = bounds(); if (P.x > b.max) P.x = b.max; if (P.x < b.min) P.x = b.min; place();
+    });
+
+    renderPet();
+    var b0 = bounds();
+    P.x = RM ? 16 : rand(b0.min, Math.max(b0.min, b0.max * 0.6));
+    place();
+    if (RM) return; /* при «уменьшить анимацию» питомец просто сидит на месте */
+
+    function next() {
+      if (P.mode === 'walk') {
+        if (isNight() || Math.random() < 0.18) setMode('sleep', rand(8, 16));
+        else setMode('sit', rand(2, 5));
+      } else if (isNight() && Math.random() < 0.7) {
+        setMode('sleep', rand(15, 30));
+      } else {
+        P.dir = Math.random() < 0.5 ? 1 : -1;
+        setMode('walk', rand(3, 7));
+      }
+    }
+    var last = performance.now();
+    function frame(now) {
+      var dt = Math.min(0.05, (now - last) / 1000); last = now;
+      if (P.mode === 'walk') {
+        var b = bounds();
+        P.x += P.dir * P.speed * dt;
+        if (P.x <= b.min) { P.x = b.min; P.dir = 1; flip.classList.remove('left'); }
+        else if (P.x >= b.max) { P.x = b.max; P.dir = -1; flip.classList.add('left'); }
+        place();
+        if (!hopping && Math.random() < dt * 0.22) hop();
+      }
+      P.t -= dt;
+      if (P.t <= 0) next();
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
+  /* ---------- запуск ---------- */
+  function tick() { tickClock(); renderMilestones(); renderSoon(); PET_RENDER(); }
+  show(location.hash.slice(1) || 'home', true);
+  tick();
+  setInterval(tick, 1000);
+  loadRemote();
+})();
+</script>
+</body>
+</html>

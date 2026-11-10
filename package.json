@@ -1,0 +1,9 @@
+{
+  "name": "ourperfectlove",
+  "private": true,
+  "type": "module",
+  "description": "Наш уютный уголок: сайт с записками и заметками",
+  "dependencies": {
+    "@netlify/blobs": "^11.1.9"
+  }
+}
