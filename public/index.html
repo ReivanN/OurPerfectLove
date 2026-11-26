@@ -163,6 +163,17 @@ html:not(.js) .rv{opacity:1;translate:none}
 .slip .q{margin:0;font-family:var(--hand);font-weight:500;font-size:clamp(26px,4vw,34px);line-height:1.25;color:var(--ink);text-wrap:balance}
 .count{font-size:14px;color:var(--muted);margin:0}
 
+/* уведомления */
+.pushwrap{margin-top:22px;display:flex;flex-direction:column;align-items:flex-start;gap:14px;max-width:520px}
+.pushwrap[hidden]{display:none}
+.pushwrap .formcard{width:100%}
+.checks{display:flex;flex-direction:column;gap:10px}
+.checks label{display:flex;align-items:flex-start;gap:10px;font-size:15px;font-weight:500;color:var(--ink);cursor:pointer;line-height:1.35}
+.checks input{width:22px;height:22px;margin:0;flex:none;accent-color:#E8587F}
+.checks small{display:block;color:var(--muted);font-size:13px;font-weight:400}
+.pushhint{margin:0;font-size:14px;color:var(--muted);line-height:1.5}
+.pushhint[hidden]{display:none}
+
 /* формы добавления записок и заметок */
 .formcard{background:#fff;border:2px dashed var(--line);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:16px;text-align:left;width:min(640px,100%)}
 .formcard[hidden],.addwrap[hidden]{display:none}
@@ -183,7 +194,8 @@ html:not(.js) .rv{opacity:1;translate:none}
 .msg{margin:0;font-size:14px;min-height:20px}
 .msg.err{color:#B0233F;font-weight:600}
 .msg.ok{color:#2E6B4A;font-weight:600}
-.formrow{display:flex;gap:12px;flex-wrap:wrap}
+.formrow{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.formrow[hidden],#push-body[hidden]{display:none}
 .linkbtn{align-self:flex-start;background:none;border:0;padding:6px 0;min-height:36px;font-size:14px;color:var(--muted);text-decoration:underline;cursor:pointer}
 .slip .linkbtn{align-self:center}
 .nopet .pet{visibility:hidden}
@@ -284,6 +296,33 @@ dialog.pwdlg::backdrop{background:rgba(75,42,56,.45)}
     <div class="soonbox rv" aria-label="Обратный отсчёт">
       <div class="r"><span class="k">До ближайшего месяца вместе</span><span class="v" id="sb-month">…</span></div>
       <div class="r"><span class="k" id="sb-year-k">До первой годовщины</span><span class="v" id="sb-year">…</span></div>
+    </div>
+    <!-- УВЕДОМЛЕНИЯ на телефон -->
+    <div class="pushwrap" id="pushwrap" hidden>
+      <button class="btn" id="pushopen" type="button" aria-expanded="false" aria-controls="pushform">🔔 Уведомления</button>
+      <form class="formcard" id="pushform" hidden novalidate>
+        <h3>Уведомления на этот телефон</h3>
+        <p class="pushhint" id="push-ios" hidden>На iPhone уведомления работают, только если открыть сайт с иконки на экране «Домой» (iOS 16.4 и новее). Нажмите «Поделиться» → «На экран Домой», откройте сайт оттуда и включите уведомления.</p>
+        <p class="pushhint" id="push-no" hidden>Этот браузер не умеет показывать уведомления. Попробуйте Chrome или Safari на телефоне.</p>
+        <div id="push-body">
+          <label class="fld" style="margin-bottom:16px">Кто вы
+            <select id="push-who"><option value="him">Леша</option><option value="vika">Вика</option></select>
+          </label>
+          <fieldset class="fld"><legend>О чём сообщать</legend>
+            <div class="checks">
+              <label><input type="checkbox" id="pk-news" checked><span>Новая заметка или записка<small>когда что-то добавляет второй из вас</small></span></label>
+              <label><input type="checkbox" id="pk-milestones" checked><span>Вехи и даты<small>утром в день месяца вместе, 100 дней, годовщины</small></span></label>
+              <label><input type="checkbox" id="pk-daily" checked><span>Записка дня<small>каждое утро случайная записка из баночки</small></span></label>
+            </div>
+          </fieldset>
+        </div>
+        <p class="msg" id="push-msg" role="status"></p>
+        <div class="formrow" id="push-btns">
+          <button class="btn primary" id="push-on" type="submit">Включить</button>
+          <button class="btn" id="push-test" type="button" hidden>Проверить</button>
+          <button class="linkbtn" id="push-off" type="button" hidden>Выключить на этом телефоне</button>
+        </div>
+      </form>
     </div>
   </div>
   <div class="stack" aria-hidden="false">
@@ -912,6 +951,98 @@ dialog.pwdlg::backdrop{background:rgba(75,42,56,.45)}
     });
   });
 
+  /* ---------- push-уведомления на телефон ---------- */
+  var swReg = null;
+  var pushOK = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    navigator.serviceWorker.register('/sw.js').then(function (r) { swReg = r; }).catch(function () {});
+  }
+  var PK = ['news', 'milestones', 'daily'];
+  function pushKinds() { var o = {}; PK.forEach(function (k) { o[k] = $('pk-' + k).checked; }); return o; }
+  function pushUI(sub) {
+    $('push-on').textContent = sub ? 'Сохранить' : 'Включить';
+    $('push-test').hidden = !sub; $('push-off').hidden = !sub;
+  }
+  function curSub() {
+    if (!pushOK) return Promise.resolve(null);
+    return navigator.serviceWorker.ready.then(function (r) { return r.pushManager.getSubscription(); }).catch(function () { return null; });
+  }
+  function refreshPush() {
+    var blocked = !pushOK;
+    $('push-ios').hidden = !(blocked && isIOS && !standalone);
+    $('push-no').hidden = !(blocked && !(isIOS && !standalone));
+    $('push-body').hidden = blocked; $('push-btns').hidden = blocked;
+    if (blocked) return;
+    var w = lsGet('love_author'); if (w === 'him' || w === 'vika') $('push-who').value = w;
+    if (Notification.permission === 'denied') setMsg('push-msg', 'Уведомления запрещены в настройках телефона для этого сайта. Разрешите их там и вернитесь сюда.', 'err');
+    curSub().then(function (sub) {
+      pushUI(sub);
+      if (!sub) return;
+      api('POST', '/api/push/status', { json: { endpoint: sub.endpoint } }).then(function (r) {
+        if (!r.ok || !r.data) return;
+        if (!r.data.subscribed) { pushUI(null); return; }
+        $('push-who').value = r.data.who;
+        PK.forEach(function (k) { $('pk-' + k).checked = r.data.kinds.indexOf(k) >= 0; });
+        setMsg('push-msg', 'Уведомления включены на этом телефоне ✓', 'ok');
+      });
+    });
+  }
+  function b64key(s) {
+    var p = '='.repeat((4 - s.length % 4) % 4), raw = atob((s + p).replace(/-/g, '+').replace(/_/g, '/'));
+    var a = new Uint8Array(raw.length); for (var i = 0; i < raw.length; i++) a[i] = raw.charCodeAt(i); return a;
+  }
+  $('pushopen').addEventListener('click', function () {
+    var f = $('pushform'), open = f.hidden;
+    f.hidden = !open; this.setAttribute('aria-expanded', String(open));
+    if (open) { setMsg('push-msg', ''); refreshPush(); }
+  });
+  $('pushform').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = $('push-on'); btn.disabled = true;
+    /* разрешение спрашиваем сразу по нажатию, иначе iPhone откажет */
+    var perm = Notification.permission === 'granted' ? Promise.resolve('granted') : Promise.resolve(Notification.requestPermission());
+    perm.then(function (p) {
+      if (p !== 'granted') throw new Error('Без разрешения уведомления не придут. Разрешите их, когда телефон спросит.');
+      setMsg('push-msg', 'Подключаем…');
+      return Promise.all([navigator.serviceWorker.ready, api('GET', '/api/push/key')]);
+    }).then(function (res) {
+      var reg = res[0], k = res[1];
+      if (!k.ok || !k.data || !k.data.publicKey) throw new Error(k.error || 'Сайт не ответил, попробуйте ещё раз');
+      return reg.pushManager.getSubscription().then(function (sub) {
+        return sub || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64key(k.data.publicKey) });
+      });
+    }).then(function (sub) {
+      var who = $('push-who').value; lsSet('love_author', who);
+      return authed('POST', '/api/push/subscribe', { json: { subscription: sub.toJSON(), who: who, kinds: pushKinds() } }).then(function (r) {
+        if (r.cancelled) { setMsg('push-msg', ''); return; }
+        if (!r.ok) throw new Error(r.error || 'Не получилось включить');
+        pushUI(sub); setMsg('push-msg', 'Готово! Уведомления включены на этом телефоне ✓', 'ok');
+      });
+    }).catch(function (err) {
+      setMsg('push-msg', (err && err.message) || 'Не получилось включить уведомления', 'err');
+    }).then(function () { btn.disabled = false; });
+  });
+  $('push-test').addEventListener('click', function () {
+    var b = this; b.disabled = true;
+    curSub().then(function (sub) {
+      if (!sub) throw new Error('Сначала включите уведомления');
+      return authed('POST', '/api/push/test', { json: { endpoint: sub.endpoint } });
+    }).then(function (r) {
+      if (r.cancelled) return;
+      if (!r.ok) throw new Error(r.error);
+      setMsg('push-msg', 'Отправили, сейчас придёт ✓', 'ok');
+    }).catch(function (err) { setMsg('push-msg', (err && err.message) || 'Не получилось отправить', 'err'); })
+      .then(function () { b.disabled = false; });
+  });
+  $('push-off').addEventListener('click', function () {
+    curSub().then(function (sub) {
+      if (!sub) return;
+      return api('POST', '/api/push/unsubscribe', { json: { endpoint: sub.endpoint } }).then(function () { return sub.unsubscribe(); });
+    }).then(function () { pushUI(null); setMsg('push-msg', 'Уведомления на этом телефоне выключены'); });
+  });
+
   /* ---------- общие данные с сервера ---------- */
   /* пока открыта форма, питомца прячем, чтобы он не закрывал кнопки */
   function syncPet() {
@@ -919,7 +1050,7 @@ dialog.pwdlg::backdrop{background:rgba(75,42,56,.45)}
     document.body.classList.toggle('nopet', hide);
   }
   tabHooks.push(syncPet);
-  function applyBackend() { var on = backend && canWrite; $('noteadd').hidden = !on; $('jarform').hidden = !on; syncPet(); }
+  function applyBackend() { var on = backend && canWrite; $('noteadd').hidden = !on; $('jarform').hidden = !on; $('pushwrap').hidden = !on; syncPet(); }
   function loadRemote() {
     if (location.protocol === 'file:') return;
     api('GET', '/api/data').then(function (r) {

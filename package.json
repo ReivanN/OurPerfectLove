@@ -4,6 +4,7 @@
   "type": "module",
   "description": "Наш уютный уголок: сайт с записками и заметками",
   "dependencies": {
-    "@netlify/blobs": "^11.1.9"
+    "@netlify/blobs": "^11.1.9",
+    "web-push": "^3.6.7"
   }
 }
