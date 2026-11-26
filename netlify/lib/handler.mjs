@@ -1,5 +1,6 @@
 /* Вся логика API. Хранилище передаётся снаружи, поэтому её можно тестировать без Netlify. */
 import { createHash, timingSafeEqual, randomUUID } from "node:crypto";
+import { vapidKeys, validSub, saveSub, getSub, deleteSub, sendPush, KINDS } from "./push.mjs";
 
 const AUTHORS = ["him", "vika"];
 const MAX_PHOTOS = 4;
@@ -7,6 +8,16 @@ const MAX_PHOTO_BYTES = 3 * 1024 * 1024;
 const MAX_BODY_BYTES = 12 * 1024 * 1024;
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_ITEMS = 1000;
+const NAMES = { him: { name: "Леша", did: "написал", put: "положил" }, vika: { name: "Вика", did: "написала", put: "положила" } };
+const short = (t, n) => (t.length > n ? t.slice(0, n - 1).trimEnd() + "…" : t);
+
+/* Уведомить второго человека; ошибки рассылки не мешают сохранению. */
+async function notifyOther(pushStore, author, payload) {
+  if (!pushStore) return;
+  try {
+    await sendPush(pushStore, payload, (r) => r.kinds.includes("news") && r.who !== author);
+  } catch (e) { console.error("notify failed", e); }
+}
 
 function json(data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data), {
@@ -64,6 +75,22 @@ export async function handle(req, store, password, opts = {}) {
     });
   }
 
+  /* ---- push-уведомления ---- */
+  const pushStore = opts.pushStore;
+  if (pushStore && m === "GET" && path === "/api/push/key") {
+    const { publicKey } = await vapidKeys(pushStore);
+    return json({ publicKey });
+  }
+  if (pushStore && m === "POST" && (path === "/api/push/status" || path === "/api/push/unsubscribe")) {
+    let body;
+    try { body = await req.json(); } catch { return fail(400, "Некорректный запрос"); }
+    const endpoint = typeof body?.endpoint === "string" ? body.endpoint : "";
+    if (!endpoint) return fail(400, "Некорректный запрос");
+    if (path === "/api/push/unsubscribe") { await deleteSub(pushStore, endpoint); return json({ ok: true }); }
+    const rec = await getSub(pushStore, endpoint);
+    return json(rec ? { subscribed: true, who: rec.who, kinds: rec.kinds } : { subscribed: false });
+  }
+
   /* ---- всё остальное требует пароль ---- */
   if (!["POST", "DELETE"].includes(m) || !path.startsWith("/api/")) return fail(404, "Не найдено");
   if (!password) return fail(503, "Пароль ещё не задан на сайте (переменная SITE_PASSWORD).");
@@ -73,6 +100,25 @@ export async function handle(req, store, password, opts = {}) {
   }
 
   if (m === "POST" && path === "/api/auth") return json({ ok: true });
+
+  if (pushStore && m === "POST" && path === "/api/push/subscribe") {
+    let body;
+    try { body = await req.json(); } catch { return fail(400, "Некорректный запрос"); }
+    if (!validSub(body?.subscription)) return fail(400, "Телефон не дал подписаться на уведомления");
+    if (!AUTHORS.includes(body?.who)) return fail(400, "Выберите, кто вы");
+    const kinds = {};
+    for (const k of KINDS) kinds[k] = body?.kinds?.[k] !== false;
+    const rec = await saveSub(pushStore, body.subscription, body.who, kinds);
+    return json({ subscribed: true, who: rec.who, kinds: rec.kinds });
+  }
+  if (pushStore && m === "POST" && path === "/api/push/test") {
+    let body;
+    try { body = await req.json(); } catch { return fail(400, "Некорректный запрос"); }
+    const endpoint = body?.endpoint;
+    const r = await sendPush(pushStore, { title: "Наш уголок ❤️", body: "Уведомления работают! Так они и будут выглядеть.", url: "/#home", tag: "test" },
+      (rec) => rec.sub.endpoint === endpoint);
+    return r.sent ? json({ ok: true }) : fail(400, "Не получилось отправить. Включите уведомления заново.");
+  }
 
   if (m === "POST" && path === "/api/jar") {
     let body;
@@ -85,6 +131,8 @@ export async function handle(req, store, password, opts = {}) {
     if (blobs.length >= MAX_ITEMS) return fail(400, "В баночке больше нет места");
     const item = { id: randomUUID(), text, from, ts: new Date().toISOString() };
     await store.setJSON("jar/" + item.id, item);
+    const n = NAMES[from];
+    await notifyOther(pushStore, from, { title: `${n.name} ${n.put} записку в баночку 💌`, body: short(text, 140), url: "/#jar", tag: "jar-" + item.id });
     return json(item, 201);
   }
 
@@ -121,6 +169,11 @@ export async function handle(req, store, password, opts = {}) {
       author, mood, title, text, photos, ts: now.toISOString(),
     };
     await store.setJSON("note/" + item.id, item);
+    const n = NAMES[author];
+    await notifyOther(pushStore, author, {
+      title: `${n.name} ${n.did} новую заметку ${mood || "📝"}`.trim(),
+      body: short(title ? title + " " + text : text, 140), url: "/#notes", tag: "note-" + item.id,
+    });
     return json({ ...item }, 201);
   }
 
